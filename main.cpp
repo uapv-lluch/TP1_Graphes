@@ -61,8 +61,8 @@ int main() {
             f[i][j] = 0;
         }
     }
-
     int s = 0;
     int t = 5;
+    flotmax(c, f, s, t);
     return 0;
 }

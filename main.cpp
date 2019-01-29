@@ -5,7 +5,7 @@ const int n = 6;
 
 using namespace std;
 
-void chaineaugmentante(int ch[n], int c[n][n], int f[n][n], int s, int t) {
+void chaineaugmentante(int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t) {
     bool visites[n];
     stack<int> P;
     bool stop = false;
@@ -33,7 +33,41 @@ void chaineaugmentante(int ch[n], int c[n][n], int f[n][n], int s, int t) {
     }
 }
 
-int flotmax(int c[n][n], int f[n][n], int s, int t) {
+
+int increment(const int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t) {
+    int x = 0;
+    int i = n-1;
+    while (i > 0) {
+        if (ch[i] != -1) {
+            if (c[ch[i]][i] == 0) { // Sens inverse
+                if (c[i][ch[i]] - f[i][ch[i]] < x || x == 0) {
+                    x = c[i][ch[i]] - f[i][ch[i]];
+                }
+            }
+            else {
+                if (c[ch[i]][i] - f[ch[i]][i] < x || x == 0) {
+                    x = c[ch[i]][i] - f[ch[i]][i];
+                }
+            }
+            i = ch[i];
+        }
+    }
+    return x;
+}
+
+void augmentation(const int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t, int x) {
+    int i = n-1;
+    while (i > 0 && ch[i] != -1) {
+        if (c[ch[i]][i] == 0) { // Sens inverse
+            f[i][ch[i]] -= x;
+        } else {
+            f[ch[i]][i] += x;
+        }
+        i = ch[i];
+    }
+}
+
+int flotmax(int c[n][n], int (&f)[n][n], int s, int t) {
     int ch[n];
     int flotmax = 0;
     bool stop = false;
@@ -42,23 +76,12 @@ int flotmax(int c[n][n], int f[n][n], int s, int t) {
         if (ch[t] == -1) {
             stop = true;
         } else {
-//            int x = increment(ch, c, f, s, t);
-//            augmentation(ch, f, s, t, x);
-//            flotmax += x
+            int x = increment(ch, c, f, s, t);
+            augmentation(ch, c, f, s, t, x);
+            flotmax += x;
         }
     }
     return flotmax;
-}
-
-// Ne marche pas encore, il faut aussi gérer le cas des sens inverse
-void augmenterIncrement(ch, c, f, s ,t, x) {
-    for (int i = 0; i < n ; ++i) {
-        if(ch[i == -1]){
-            f[i][0] +=x
-        } else {
-            f[i][ch[i]] +=x;
-        }
-    }
 }
 
 int main() {
@@ -86,6 +109,6 @@ int main() {
     }
     int s = 0;
     int t = 5;
-    flotmax(c, f, s, t);
+    cout << "Flot max = " << flotmax(c, f, s, t) << endl;
     return 0;
 }

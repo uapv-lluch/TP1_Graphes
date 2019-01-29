@@ -23,7 +23,7 @@ void chaineaugmentante(int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t) 
             visites[i] = true;
             for (unsigned j = 0 ; j < n ; ++j) {
                 if (!visites[j]) {
-                    if ((c[i][j] > 0 && c[i][j] > f[i][j]) || (c[j][i] > 0 && f[i][j] > 0)) {
+                    if (((c[i][j] > 0) && (c[i][j] > f[i][j])) || ((c[j][i] > 0) && (f[j][i] > 0))) {
                         P.push(j);
                         ch[j] = i;
                     }
@@ -40,8 +40,8 @@ int increment(const int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t) {
     while (i > 0) {
         if (ch[i] != -1) {
             if (c[ch[i]][i] == 0) { // Sens inverse
-                if (c[i][ch[i]] - f[i][ch[i]] < x || x == 0) {
-                    x = c[i][ch[i]] - f[i][ch[i]];
+                if (f[i][ch[i]] < x || x == 0) {
+                    x = f[i][ch[i]];
                 }
             }
             else {
@@ -69,10 +69,15 @@ void augmentation(const int (&ch)[n], int c[n][n], int (&f)[n][n], int s, int t,
 
 int flotmax(int c[n][n], int (&f)[n][n], int s, int t) {
     int ch[n];
-    int flotmax = 0;
+    int flotmax = 9;
     bool stop = false;
     while (!stop) {
         chaineaugmentante(ch, c, f, s, t);
+        for (int i = 0 ; i < n ; ++i) {
+            cout << ch[i] << ";";
+        }
+
+        cout << endl;
         if (ch[t] == -1) {
             stop = true;
         } else {
@@ -107,6 +112,15 @@ int main() {
             f[i][j] = 0;
         }
     }
+
+    f[0][1] = 3;
+    f[0][2] = 6;
+    f[1][3] = 3;
+    f[2][3] = 4;
+    f[2][4] = 2;
+    f[3][5] = 7;
+    f[4][5] = 2;
+
     int s = 0;
     int t = 5;
     cout << "Flot max = " << flotmax(c, f, s, t) << endl;
